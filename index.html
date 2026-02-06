@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Maker - Professional Fonts Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importing 5 Professional Bengali Fonts + Global Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;700&family=Anek+Bangla:wght@400;700&family=Tiro+Bangla&family=Galada&family=Noto+Sans+Arabic:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --selected-font: 'Hind Siliguri', sans-serif;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* Applying the selected font to the leaflet */
+        .page {
+            font-family: var(--selected-font);
+            width: 297mm;
+            height: 210mm;
+            padding: 15mm;
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        @media print {
+            body { background: none; margin: 0; padding: 0; }
+            .no-print { display: none !important; }
+            .page {
+                margin: 0;
+                box-shadow: none;
+                width: 297mm;
+                height: 210mm;
+                page-break-after: always;
+                border: none;
+            }
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+        }
+
+        .main-text {
+            font-size: 80px;
+            line-height: 1.2;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .sub-text {
+            font-size: 36px;
+            font-weight: 600;
+        }
+
+        .contact-text {
+            font-size: 42px;
+            font-weight: 700;
+            margin-top: 20px;
+        }
+
+        .floating-print {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            transition: transform 0.2s;
+        }
+        .floating-print:hover { transform: scale(1.1); }
+
+        .color-input {
+            -webkit-appearance: none;
+            width: 32px;
+            height: 32px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .color-input::-webkit-color-swatch { border-radius: 50%; border: 2px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Print Button -->
+    <button onclick="window.print()" class="no-print floating-print bg-green-600 text-white p-4 rounded-full shadow-2xl flex items-center justify-center gap-2 hover:bg-green-700">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        <span class="font-bold">Print</span>
+    </button>
+
+    <div class="no-print p-6">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header with Selectors -->
+            <div class="flex flex-col lg:flex-row justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm gap-4 border-b-4 border-blue-600">
+                <h1 class="text-xl font-bold text-blue-800">Leaflet Maker Pro</h1>
+                
+                <div class="flex flex-wrap items-center gap-4">
+                    <!-- Font Selector -->
+                    <div class="flex items-center gap-2">
+                        <label class="font-bold text-gray-700 text-sm">Font:</label>
+                        <select id="font-select" onchange="changeFont(this.value)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2 font-semibold">
+                            <option value="'Hind Siliguri', sans-serif">Hind Siliguri (Default)</option>
+                            <option value="'Noto Sans Bengali', sans-serif">Noto Sans (Clean)</option>
+                            <option value="'Anek Bangla', sans-serif">Anek Bangla (Modern)</option>
+                            <option value="'Tiro Bangla', serif">Tiro Bangla (Serif/Formal)</option>
+                            <option value="'Galada', cursive">Galada (Stylish)</option>
+                        </select>
+                    </div>
+
+                    <!-- Language Selector -->
+                    <div class="flex items-center gap-2">
+                        <label class="font-bold text-gray-700 text-sm">Language:</label>
+                        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-blue-50 border border-blue-300 text-blue-900 text-sm rounded-lg p-2 font-bold">
+                            <option value="bn">Bengali (বাংলা)</option>
+                            <option value="en">English</option>
+                            <option value="hi">Hindi (हिन्दी)</option>
+                            <option value="ur">Urdu (اردو)</option>
+                            <option value="ar">Arabic (العربية)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Control Panel -->
+                <div class="bg-white p-6 rounded-xl shadow-lg h-[600px] overflow-y-auto">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2" id="panel-title">এডিট ও ফন্ট সেটআপ</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Tagline -->
+                        <div class="p-3 bg-gray-50 rounded-lg border-l-4 border-blue-500">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-sm font-bold text-gray-700" id="lbl-tagline">Tagline</label>
+                                <input type="color" id="clr-tagline" value="#1f2937" class="color-input">
+                            </div>
+                            <input type="text" id="in-tagline" class="w-full p-2 border rounded mb-2">
+                            <input type="range" id="size-tagline" min="10" max="80" value="36" class="w-full">
+                        </div>
+                        
+                        <!-- Main Heading -->
+                        <div class="p-3 bg-gray-50 rounded-lg border-l-4 border-red-500">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-sm font-bold text-gray-700" id="lbl-main">Main Heading</label>
+                                <input type="color" id="clr-main" value="#000000" class="color-input">
+                            </div>
+                            <textarea id="in-main" rows="2" class="w-full p-2 border rounded mb-2"></textarea>
+                            <input type="range" id="size-main" min="20" max="180" value="80" class="w-full">
+                        </div>
+                        
+                        <!-- Location -->
+                        <div class="p-3 bg-gray-50 rounded-lg border-l-4 border-green-500">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-sm font-bold text-gray-700" id="lbl-location">Location</label>
+                                <input type="color" id="clr-location" value="#1f2937" class="color-input">
+                            </div>
+                            <input type="text" id="in-location" class="w-full p-2 border rounded mb-2">
+                            <input type="range" id="size-location" min="10" max="100" value="36" class="w-full">
+                        </div>
+                        
+                        <!-- Contact -->
+                        <div class="p-3 bg-gray-50 rounded-lg border-l-4 border-orange-500">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-sm font-bold text-gray-700" id="lbl-contact">Contact</label>
+                                <input type="color" id="clr-contact" value="#000000" class="color-input">
+                            </div>
+                            <input type="text" id="in-contact" class="w-full p-2 border rounded mb-2">
+                            <input type="range" id="size-contact" min="10" max="100" value="42" class="w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Guide -->
+                <div class="flex flex-col justify-center bg-blue-50 p-6 rounded-xl border border-blue-100 h-fit">
+                    <h3 class="font-bold text-blue-800 mb-2">প্রফেশনাল ফন্ট টিপস:</h3>
+                    <div class="text-sm text-blue-900 space-y-2">
+                        <p>• <strong>Noto Sans:</strong> পরিষ্কার ও সহজে পড়ার যোগ্য। অফিসের কাজের জন্য ভালো।</p>
+                        <p>• <strong>Anek Bangla:</strong> আধুনিক ও বোল্ড লিফলেটের জন্য সেরা।</p>
+                        <p>• <strong>Tiro Bangla:</strong> ক্লাসিক ও রাজকীয় অনুভূতির জন্য এটি ব্যবহার করুন।</p>
+                        <p>• <strong>Galada:</strong> এটি বেশ স্টাইলিশ, শুধুমাত্র মূল হেডলাইনের জন্য ব্যবহার করা ভালো।</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet Preview Area -->
+    <div class="overflow-auto pb-20">
+        <div id="leaflet-page" class="page">
+            <div id="out-tagline" class="sub-text"></div>
+            <div id="out-main" class="main-text"></div>
+            <div id="out-location" class="sub-text mt-4"></div>
+            <div id="out-contact-container" class="contact-text">
+                <span id="contact-label">যোগাযোগ:</span> <span id="out-contact"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'bn';
+        const numberMap = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };
+
+        const uiText = {
+            bn: { panel: "এডিট ও ফন্ট সেটআপ", lblTag: "Tagline (উপরের লেখা)", lblMain: "Main Heading (মূল লেখা)", lblLoc: "Location (ঠিকানা)", lblCon: "Contact (নম্বর দিন)", btnPrint: "প্রিন্ট করুন (Landscape)", contactLbl: "যোগাযোগ:", defaultTag: "সুন্দর ও মনোরম পরিবেশে", defaultMain: "5 টি সিট ভাড়া\nদেওয়া হবে।", defaultLoc: "আকুব মেডিকেল এর সাথে", rtl: false },
+            en: { panel: "Edit & Font Setup", lblTag: "Tagline", lblMain: "Main Heading", lblLoc: "Location", lblCon: "Contact Number", btnPrint: "Print Now", contactLbl: "Contact:", defaultTag: "In a beautiful and pleasant environment", defaultMain: "5 Seats Available\nFor Rent", defaultLoc: "Beside Akub Medical", rtl: false },
+            hi: { panel: "संपादन और फ़ॉन्ट", lblTag: "टैगलाइन", lblMain: "मुख्य शीर्षक", lblLoc: "स्थान", lblCon: "संपर्क नंबर", btnPrint: "प्रिंट करें", contactLbl: "संपर्क:", defaultTag: "सुंदर और सुखद वातावरण में", defaultMain: "5 सीटें किराए के लिए\nउपलब्ध हैं", defaultLoc: "अकूब मेडिकल के पास", rtl: false },
+            ur: { panel: "ترمیم اور فانٹ", lblTag: "ٹیگ لائن", lblMain: "مرکزی سرخی", lblLoc: "مقام", lblCon: "رابطہ نمبر", btnPrint: "پرنٹ کریں", contactLbl: "رابطہ:", defaultTag: "خوبصورت اور خوشگوار ماحول میں", defaultMain: "5 نشستیں کرایہ کے لیے\nدستیاب ہیں", defaultLoc: "اکوب میڈیکل کے پاس", rtl: true },
+            ar: { panel: "تعديل الخط", lblTag: "الشعار", lblMain: "العنوان الرئيسي", lblLoc: "الموقع", lblCon: "رقم الاتصال", btnPrint: "طباعة", contactLbl: "اتصال:", defaultTag: "في بيئة جميلة وممتعة", defaultMain: "5 مقاعد متاحة\nللإيجار", defaultLoc: "بجانب أكوب ميديكال", rtl: true }
+        };
+
+        const config = [
+            { inputId: 'in-tagline', outputId: 'out-tagline', clrId: 'clr-tagline', sizeId: 'size-tagline' },
+            { inputId: 'in-main', outputId: 'out-main', clrId: 'clr-main', sizeId: 'size-main' },
+            { inputId: 'in-location', outputId: 'out-location', clrId: 'clr-location', sizeId: 'size-location' },
+            { inputId: 'in-contact', outputId: 'out-contact-container', clrId: 'clr-contact', sizeId: 'size-contact' }
+        ];
+
+        function changeFont(fontFamily) {
+            document.documentElement.style.setProperty('--selected-font', fontFamily);
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const t = uiText[lang];
+            document.getElementById('panel-title').innerText = t.panel;
+            document.getElementById('lbl-tagline').innerText = t.lblTag;
+            document.getElementById('lbl-main').innerText = t.lblMain;
+            document.getElementById('lbl-location').innerText = t.lblLoc;
+            document.getElementById('lbl-contact').innerText = t.lblCon;
+            document.getElementById('in-tagline').value = t.defaultTag;
+            document.getElementById('in-main').value = t.defaultMain;
+            document.getElementById('in-location').value = t.defaultLoc;
+            document.getElementById('leaflet-page').style.direction = t.rtl ? 'rtl' : 'ltr';
+            updatePreview();
+        }
+
+        function updatePreview() {
+            config.forEach(item => {
+                const input = document.getElementById(item.inputId);
+                const output = document.getElementById(item.outputId);
+                const colorPicker = document.getElementById(item.clrId);
+                const slider = document.getElementById(item.sizeId);
+                let val = input.value;
+                if (currentLang === 'bn') val = val.replace(/[0-9]/g, s => numberMap[s]);
+                if (item.inputId === 'in-contact') document.getElementById('out-contact').innerText = val;
+                else output.innerHTML = val.replace(/\n/g, '<br>');
+                output.style.color = colorPicker.value;
+                output.style.fontSize = slider.value + 'px';
+            });
+            document.getElementById('contact-label').innerText = uiText[currentLang].contactLbl;
+        }
+
+        config.forEach(item => {
+            document.getElementById(item.inputId).addEventListener('input', updatePreview);
+            document.getElementById(item.clrId).addEventListener('input', updatePreview);
+            document.getElementById(item.sizeId).addEventListener('input', updatePreview);
+        });
+
+        window.onload = () => {
+            document.getElementById('in-contact').value = "0571655898 / 0530518037";
+            changeLanguage('bn');
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>
